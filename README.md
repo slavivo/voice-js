@@ -1,3 +1,8 @@
+# Acknowledgements
+This project is based on [openai-realtime-webrtc-demo](https://github.com/realtime-ai/openai-realtime-webrtc-demo), created by leolxliu.
+
+The original project is licensed under the MIT License.
+
 # OpenAI WebRTC Audio Chat
 
 A simple web application that demonstrates real-time audio conversation with OpenAI's Realtime API using WebRTC. This application allows users to have voice conversations with OpenAI's language models.
@@ -30,8 +35,17 @@ npm install
 ```
 
 3. Set up your OpenAI API key:
+On Linux/MacOS (bash/zsh):
 ```bash
 export OPENAI_API_KEY=your_api_key_here
+```
+On Windows (cmd):
+```cmd
+set OPENAI_API_KEY=your_api_key_here
+```
+On Windows (PowerShell):
+```powershell
+$env:OPENAI_API_KEY="your_api_key_here"
 ```
 
 ## Running the Application
@@ -68,17 +82,6 @@ npm run dev
 - The application uses ephemeral API keys for secure client-side connections
 - The main OpenAI API key is only used server-side
 - All communication is handled through secure WebRTC channels
-
-## Development
-
-The project uses Vite for development and building. Available commands:
-
-```bash
-npm run dev      # Start development server
-npm run build    # Build for production
-npm run preview  # Preview production build
-npm run server   # Start backend server
-```
 
 ## License
 

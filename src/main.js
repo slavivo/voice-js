@@ -98,15 +98,36 @@ function updateStatus(message) {
 startBtn.addEventListener("click", async () => {
   try {
     if (dataChannel && dataChannel.readyState === "open") {
-      const event = {
+      const voice = document.getElementById("voiceSelect").value;
+      const instructions = document.getElementById("instructionInput").value;
+
+      const sessionUpdate = {
+        type: "session.update",
+        session: {
+          modalities: ["text", "audio"],
+          instructions: instructions,
+          voice: voice,  // You can dynamically set this based on user selection
+          temperature: 0.8,
+          tool_choice: "auto",
+          input_audio_format: "pcm16",
+          output_audio_format: "pcm16",
+          input_audio_transcription: {
+            model: "whisper-1"
+          }
+        }
+      };
+      dataChannel.send(JSON.stringify(sessionUpdate));
+      updateStatus("Session configuration sent.");
+
+      const responseCreate = {
         type: "response.create",
         response: {
           modalities: ["text", "audio"],
-          instructions: "Hello, how can I help you today?",
         },
       };
-      dataChannel.send(JSON.stringify(event));
+      dataChannel.send(JSON.stringify(responseCreate));
       updateStatus("Started conversation");
+
       startBtn.disabled = true;
       stopBtn.disabled = false;
     }
@@ -118,13 +139,20 @@ startBtn.addEventListener("click", async () => {
 stopBtn.addEventListener("click", () => {
   try {
     if (dataChannel && dataChannel.readyState === "open") {
-      dataChannel.send(JSON.stringify({ type: "response.stop" }));
-      updateStatus("Stopped conversation");
-      startBtn.disabled = false;
-      stopBtn.disabled = true;
+      // Gracefully stop the model's output
+      dataChannel.send(JSON.stringify({ type: "response.cancel" }));
+      updateStatus("Conversation canceled.");
     }
+
+    // Reset UI (but keep connection alive)
+    startBtn.disabled = false;
+    stopBtn.disabled = true;
+
+    // Clear status log
+    statusDiv.innerHTML = `<div>[${new Date().toLocaleTimeString()}] Conversation reset. Click "Start" to begin again.</div>`;
   } catch (error) {
-    updateStatus(`Error stopping conversation: ${error.message}`);
+    updateStatus(`Error during reset: ${error.message}`);
+    console.error("Reset error:", error);
   }
 });
 
