@@ -1,10 +1,15 @@
 import express from "express";
 import cors from "cors";
+import {fileURLToPath} from "url";
+import path from "path";
 
 const app = express();
 app.use(cors());
 
-// 获取 ephemeral token 的端点
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use(express.static(path.join(__dirname, "src")));
+
 app.get("/session", async (req, res) => {
   try {
     const response = await fetch(
@@ -23,7 +28,7 @@ app.get("/session", async (req, res) => {
     );
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      throw new Error(`HTTP error! status: ${response.status}, check if you set the API key correctly`);
     }
 
     const data = await response.json();
